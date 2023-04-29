@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Dimensions } from "react-native";
 import DestinationCard from "./DestinationCard.js";
 import Animated, {
   useSharedValue,
@@ -11,7 +12,9 @@ import Animated, {
 import { PanGestureHandler } from "react-native-gesture-handler";
 
 export default function DraggableCard({ id, orderedSchedule, object }) {
-  const CARD_HEIGHT = 150;
+  const MARGIN= 0.025 * Dimensions.get("window").height
+  console.log("margin: ", MARGIN)
+  const CARD_HEIGHT = 150 + (2*MARGIN);
 
   const pressed = useSharedValue(0);
   const startingPosition = orderedSchedule.value[object["name"]] * CARD_HEIGHT;
@@ -95,12 +98,13 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
       transform: [{ translateX: x.value }, { rotate: `${pressed.value}deg` }],
       position: "absolute",
       top: y.value,
-      minHeight: CARD_HEIGHT,
+      flex: 1,
+      width:"100%",
     };
   });
 
   return (
-    <PanGestureHandler onGestureEvent={eventHandler}>
+    <PanGestureHandler onGestureEvent={eventHandler} activeOffsetX={[-100, 100]}  >
       <Animated.View style={animatedStyle}>
         <DestinationCard title={object.name} />
       </Animated.View>

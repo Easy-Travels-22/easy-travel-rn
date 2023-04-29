@@ -12,17 +12,19 @@ import AnimatedButtons from "./AnimatedButtons";
 import { TapGestureHandler } from "react-native-gesture-handler";
 
 
-export default function DaySection({ date, scheduleArr }) {
+export default function DaySection({ date, scheduleArr, navigation }) {
   const onPress = () => {
     console.log("press");
   };
 
   const handleEditPress = () => {
     console.log("edit");
+    navigation.push("Edit", {date: date, scheduleArr: scheduleArr});
   };
 
   const handleMovePress = () => {
     console.log("move");
+    
   };
 
   return (
