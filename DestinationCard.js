@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#3A5A40",
     minHeight: 150,
-    width: "100%",
+    width: 0.9 * Dimensions.get("window").width,
     borderRadius: 10,
     marginVertical: 0.025 * Dimensions.get("window").height,
   },

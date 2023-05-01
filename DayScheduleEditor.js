@@ -7,7 +7,7 @@ import Animated, {
 
 export default function DayScheduleEditor({ route, navigation }) {
   const {scheduleArr, date} = route.params
-  const SCROLLVIEW_HEIGHT =  2000;
+  const SCROLLVIEW_HEIGHT =  scheduleArr.length * 200;
 
   const listToObject = (array) => {
     returnObj = {};
@@ -23,8 +23,9 @@ export default function DayScheduleEditor({ route, navigation }) {
   console.log(scheduleArr)
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, {minHeight: SCROLLVIEW_HEIGHT}]} style={{backgroundColor: "#A3B18A"}} >
-      <Text style={styles.titleText}>{date}</Text>
+    <View style={styles.container} >
+    <Animated.ScrollView contentContainerStyle={[styles.scrollContainer, {minHeight: SCROLLVIEW_HEIGHT}]} showsVerticalScrollIndicator={false} >
+    <Text style={styles.titleText}>{date}</Text>
       {scheduleArr.map((activity) => {
         return (
           <DraggableCard
@@ -34,14 +35,20 @@ export default function DayScheduleEditor({ route, navigation }) {
           />
         );
       })}
-    </ScrollView>
+    </Animated.ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#A3B18A",
-    marginVertical: 15,
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    paddingHorizontal: 0.025 * Dimensions.get("window").width,
+    },
+  scrollContainer: {
     position: "relative",
     width: 0.95 * Dimensions.get("window").width,
     borderWidth: 5,
@@ -50,10 +57,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: "2%",
     paddingVertical: "1%",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "flex-start",
   },
   titleText: {
     fontSize: 30,
-    color: "#DAD7CD",
+    color: "#3A5A40",
+    marginVertical: 10,
+
   },
 });
