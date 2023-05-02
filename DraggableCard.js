@@ -12,7 +12,7 @@ import Animated, {
 import { PanGestureHandler } from "react-native-gesture-handler";
 
 export default function DraggableCard({ id, orderedSchedule, object }) {
-  const MARGIN = 0.025 * Dimensions.get("window").height;
+  const MARGIN = 0.02 * Dimensions.get("window").height;
   const CARDS_MARGIN_FROM_SCROLLVIEW =
     (0.05 * Dimensions.get("window").width - 10) / 2;
   const CARD_HEIGHT = 150 + 2 * MARGIN;
@@ -115,7 +115,7 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
     <Animated.View style={animatedStyle}>
       <PanGestureHandler onGestureEvent={eventHandler} activateAfterLongPress={400} >
         <Animated.View style={{maxWidth: 35, maxHeight: 80}}>
-          <DestinationCard title={object.name} />
+          <DestinationCard destination={object} />
         </Animated.View>
       </PanGestureHandler>
     </Animated.View>

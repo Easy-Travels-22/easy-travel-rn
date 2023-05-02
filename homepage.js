@@ -10,11 +10,11 @@ export default function HomePage({navigation}) {
         {
           date: "28-05-2023",
           schedule: [
-            { type: "destination", name: "Shinjuku" },
-            { type: "transport", name: "busbus" },
-            { type: "destination", name: "Hotel" },
-            { type: "destination", name: "Spa" },
-            { type: "destination", name: "Kyoto" },
+            { type: "destination", name: "Shinjuku", description: "Neon-lit Tokyo playground. Shop, dine, party. Busiest train station in the world. Shinjuku is a must-visit." },
+            { type: "transport", name: "busbus", description: "asdfjkhfdglkwe" },
+            { type: "destination", name: "Hotel", description: "asdfjkhfdglkwe" },
+            { type: "destination", name: "Spa", description: "asdfjkhfdglkwe" },
+            { type: "destination", name: "Kyoto", description: "asdfjkhfdglkwe" },
     
           ],
         },

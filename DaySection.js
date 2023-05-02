@@ -9,8 +9,6 @@ import DestinationCard from "./DestinationCard";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from '@expo/vector-icons';
 import AnimatedButtons from "./AnimatedButtons";
-import { TapGestureHandler } from "react-native-gesture-handler";
-
 
 export default function DaySection({ date, scheduleArr, navigation }) {
   const onPress = () => {
@@ -43,7 +41,7 @@ export default function DaySection({ date, scheduleArr, navigation }) {
           </AnimatedButtons>
       </View>
       {scheduleArr.map((activity) => {
-        return <DestinationCard title={activity.name} />;
+        return <DestinationCard destination={activity} />;
       })}
     </View>
   );
