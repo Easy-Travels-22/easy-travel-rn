@@ -10,7 +10,8 @@ export default function HomeStack() {
 
   return (
     <Stack.Navigator screenOptions={{
-      headerShown: false
+      headerShown: false,
+      gestureEnabled: false
     }}>
       <Stack.Screen name="Home" component={HomePage} />
       <Stack.Screen name="Edit" component={DayScheduleEditor} />
