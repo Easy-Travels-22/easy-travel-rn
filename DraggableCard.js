@@ -16,6 +16,7 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
   const CARDS_MARGIN_FROM_SCROLLVIEW =
     (0.05 * Dimensions.get("window").width - 10) / 2;
   const CARD_HEIGHT = 150 + 2 * MARGIN;
+  const TITLE_SPACE = 50;
 
   const pressed = useSharedValue(0);
   const startingPosition = orderedSchedule.value[object["name"]] * CARD_HEIGHT;
@@ -105,7 +106,7 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
     return {
       transform: [{ translateX: x.value }, { rotate: `${pressed.value}deg` }],
       position: "absolute",
-      top: y.value,
+      top: y.value + TITLE_SPACE,
       left: CARDS_MARGIN_FROM_SCROLLVIEW,
       flex: 1,
     };
@@ -115,7 +116,7 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
     <Animated.View style={animatedStyle}>
       <PanGestureHandler onGestureEvent={eventHandler} activateAfterLongPress={400} >
         <Animated.View style={{maxWidth: 35, maxHeight: 80}}>
-          <DestinationCard destination={object} />
+          <DestinationCard editable={true} destination={object} />
         </Animated.View>
       </PanGestureHandler>
     </Animated.View>

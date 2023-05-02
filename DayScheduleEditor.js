@@ -1,5 +1,5 @@
 import DraggableCard from "./DraggableCard";
-import { StyleSheet, View, Text, ScrollView, Dimensions } from "react-native";
+import { StyleSheet, View, Text, ScrollView, Dimensions, SafeAreaView } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -7,7 +7,9 @@ import Animated, {
 
 export default function DayScheduleEditor({ route, navigation }) {
   const {scheduleArr, date} = route.params
-  const SCROLLVIEW_HEIGHT =  scheduleArr.length * 200;
+  const MARGIN = 0.02 * Dimensions.get("window").height;
+  const TITLE_SPACE = 75
+  const SCROLLVIEW_HEIGHT =  scheduleArr.length * (150 + (2 * MARGIN)) + MARGIN + TITLE_SPACE;
 
   const listToObject = (array) => {
     returnObj = {};
@@ -23,8 +25,8 @@ export default function DayScheduleEditor({ route, navigation }) {
   console.log(scheduleArr)
 
   return (
-    <View style={styles.container} >
-    <Animated.ScrollView contentContainerStyle={[styles.scrollContainer, {minHeight: SCROLLVIEW_HEIGHT}]} showsVerticalScrollIndicator={false} >
+    <SafeAreaView style={styles.container} >
+    <Animated.ScrollView style={{marginLeft: 0.025 * Dimensions.get("window").width, marginBottom: 10}} contentContainerStyle={[styles.scrollContainer, {minHeight: SCROLLVIEW_HEIGHT}]} showsVerticalScrollIndicator={false} >
     <Text style={styles.titleText}>{date}</Text>
       {scheduleArr.map((activity) => {
         return (
@@ -36,7 +38,7 @@ export default function DayScheduleEditor({ route, navigation }) {
         );
       })}
     </Animated.ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -46,8 +48,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "flex-start",
-    paddingHorizontal: 0.025 * Dimensions.get("window").width,
-    },
+  },
   scrollContainer: {
     position: "relative",
     width: 0.95 * Dimensions.get("window").width,

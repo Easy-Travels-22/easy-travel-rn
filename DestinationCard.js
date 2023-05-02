@@ -1,16 +1,20 @@
-import { View, StyleSheet, Dimensions, Text, Image } from "react-native";
-import { MaterialIconsm, AntDesign, Entypo } from "@expo/vector-icons";
+import { View, StyleSheet, Dimensions, Text, Image, TouchableOpacity } from "react-native";
+import { MaterialIcons, AntDesign, Entypo } from "@expo/vector-icons";
 
-export default function DestinationCard({ destination }) {
+export default function DestinationCard({ destination, editable }) {
   function determineIcon() {
     switch (destination.type) {
-      case "accomodation":
+      case "accommodation":
         return <MaterialIcons name="hotel" size={80} color="black" />;
       case "transport":
         return <AntDesign name="car" size={70} color="black" />;
       case "destination":
         return <Entypo name="location" size={70} color="black" />;
     }
+  }
+
+  function handleMenuPress() {
+    console.log("menu press")
   }
 
   return (
@@ -24,11 +28,12 @@ export default function DestinationCard({ destination }) {
         {!destination.image && <Text>Tap to add image</Text>}
       </View>
       <View style={styles.descriptionContainer}>
-        <Text style={{color: "#DAD7CD", fontSize: 24}} >{destination.name}</Text>
+        <Text style={{color: "#DAD7CD", fontSize: 24, marginBottom: 5}} >{destination.name}</Text>
         <Text style={{color: "#DAD7CD"}} >{destination.description}</Text>
       </View>
-      <View style={styles.menuContainer} >
-      </View>
+      {editable && <View style={styles.menuContainer} >
+        <TouchableOpacity onPress={handleMenuPress} ><Entypo name="dots-three-horizontal" size={20} color="black" /></TouchableOpacity>
+      </View>}
     </View>
   );
 }
@@ -63,6 +68,7 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     flex: 1,
-    height: 140
+    height: 140,
+    paddingRight: 5
   }
 });
