@@ -113,8 +113,8 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
 
   return (
     <Animated.View style={animatedStyle}>
-      <PanGestureHandler onGestureEvent={eventHandler} activateAfterLongPress={500}>
-        <Animated.View style={{maxWidth: "50%"}}>
+      <PanGestureHandler onGestureEvent={eventHandler} activateAfterLongPress={400} >
+        <Animated.View style={{maxWidth: 35, maxHeight: 80}}>
           <DestinationCard title={object.name} />
         </Animated.View>
       </PanGestureHandler>
