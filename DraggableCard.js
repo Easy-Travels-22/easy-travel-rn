@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dimensions } from "react-native";
+import { Dimensions, TouchableOpacity, Text, View, StyleSheet, Modal } from "react-native";
 import DestinationCard from "./DestinationCard.js";
 import Animated, {
   useSharedValue,
@@ -10,12 +10,13 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
+import ActivityBottomSheet from "./ActivityBottomSheet.js";
 
 export default function DraggableCard({ id, orderedSchedule, object }) {
-  const MARGIN = 0.02 * Dimensions.get("window").height;
+  const MARGIN = 0.05 * Dimensions.get("window").height;
   const CARDS_MARGIN_FROM_SCROLLVIEW =
     (0.05 * Dimensions.get("window").width - 10) / 2;
-  const CARD_HEIGHT = 150 + 2 * MARGIN;
+  const CARD_HEIGHT = 150 + 1.5 * MARGIN;
   const TITLE_SPACE = 50;
 
   const pressed = useSharedValue(0);
@@ -23,7 +24,9 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
   const x = useSharedValue(0);
   const y = useSharedValue(startingPosition);
   const [moving, setMoving] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
+ 
   function isCardDrag(x, y) {
     "worklet";
     return true;
@@ -80,7 +83,7 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
       pressed.value = withSpring(-3);
       x.value = event.translationX;
       y.value = startingPosition + event.translationY;
-      let center = y.value - 75;
+      let center = y.value - CARD_HEIGHT/2;
 
       const newPosition = getNewPosition(center);
       console.log("newPosition: ", newPosition);
@@ -112,13 +115,32 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
     };
   });
 
+  function handleAddActivity() {
+    setModalVisible(true);
+  }
+
   return (
     <Animated.View style={animatedStyle}>
       <PanGestureHandler onGestureEvent={eventHandler} activateAfterLongPress={400} >
         <Animated.View style={{maxWidth: 35, maxHeight: 80}}>
           <DestinationCard editable={true} destination={object} />
+          <TouchableOpacity onPress={handleAddActivity} ><View style={styles.addButton}><Text style={{color: "#344E41"}}>Add Activity Below</Text></View></TouchableOpacity>
         </Animated.View>
       </PanGestureHandler>
+      <ActivityBottomSheet open={modalVisible} setOpen={setModalVisible} editable={true} />
     </Animated.View>
   );
 }
+
+const styles = StyleSheet.create({
+  addButton: {
+    width: 0.9 * Dimensions.get("window").width,
+    height: 0.03 * Dimensions.get("window").height,
+    marginTop: 0.01 * Dimensions.get("window").height,
+    backgroundColor: "#DAD7CD",
+    borderRadius: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center"
+  }
+})

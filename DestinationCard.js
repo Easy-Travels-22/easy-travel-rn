@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     minHeight: 150,
     width: 0.9 * Dimensions.get("window").width,
     borderRadius: 10,
-    marginVertical: 0.025 * Dimensions.get("window").height,
+    marginTop: 0.025 * Dimensions.get("window").height,
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "flex-start",

@@ -7,9 +7,9 @@ import Animated, {
 
 export default function DayScheduleEditor({ route, navigation }) {
   const {scheduleArr, date} = route.params
-  const MARGIN = 0.02 * Dimensions.get("window").height;
+  const MARGIN = 0.05 * Dimensions.get("window").height;
   const TITLE_SPACE = 75
-  const SCROLLVIEW_HEIGHT =  scheduleArr.length * (150 + (2 * MARGIN)) + MARGIN + TITLE_SPACE;
+  const SCROLLVIEW_HEIGHT =  scheduleArr.length * (150 + (1.5 * MARGIN)) + TITLE_SPACE;
 
   const listToObject = (array) => {
     returnObj = {};
