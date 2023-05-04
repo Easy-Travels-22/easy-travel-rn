@@ -5,20 +5,29 @@ import {
   StyleSheet,
   Dimensions,
   Text,
-  Button,
-  KeyboardAvoidingView,
   TouchableOpacity,
 } from "react-native";
 import { Formik } from "formik";
 import { SegmentedButtons } from "react-native-paper";
 import ActivityTypeSelection from "./ActivityTypeSelection";
 
-export default function NewActivityForm() {
+export default function NewActivityForm({activity, setActivity, handleSubmit, newActivity, editable}) {
   const [type, setType] = useState("destination");
+
+  function handleNameChange(input) {
+      const newObj = {name: input, description: activity.description}
+      setActivity(a => newObj)
+  }
+
+  function handleDescriptionChange(input) {
+    const newObj = {name: activity.name, description: activity.input}
+    setActivity(a => newObj)
+}
+
   return (
     <Formik
-      initialValues={{ name: "", description: "" }}
-      onSubmit={(values) => console.log(values)}
+      onSubmit={val => handleSubmit()}
+      initialValues={{}} // must be here
     >
       {({ handleChange, handleBlur, handleSubmit, values }) => (
         <View style={styles.container}>
@@ -37,14 +46,16 @@ export default function NewActivityForm() {
                 paddingHorizontal: 5,
                 marginTop: 5,
               }}
-              onChangeText={handleChange("name")}
+              editable={editable}
+              onChangeText={name => handleNameChange(name)}
               onBlur={handleBlur("name")}
-              value={values.name}
+              value={activity.name}
             />
           </View>
           <View style={{ width: "100%" }}>
             <Text style={{ fontSize: 20, color: "#DAD7CD" }}>Description</Text>
             <TextInput
+              editable={editable}
               multiline={true}
               style={{
                 height: 140,
@@ -55,9 +66,9 @@ export default function NewActivityForm() {
                 paddingHorizontal: 5,
                 marginTop: 5,
               }}
-              onChangeText={handleChange("description")}
+              onChangeText={desc => handleDescriptionChange(desc)}
               onBlur={handleBlur("description")}
-              value={values.description}
+              value={activity.description}
             />
           </View>
           <TouchableOpacity onPress={handleSubmit} style={{width: "100%", height: 0.06 * Dimensions.get("window").height , backgroundColor: "#A3B18A", borderRadius: 5}} ><Text>Let's Go!</Text></TouchableOpacity>

@@ -11,6 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import ActivityBottomSheet from "./ActivityBottomSheet.js";
+import TripContext from "./TripContext.js";
 
 export default function DraggableCard({ id, orderedSchedule, object }) {
   const MARGIN = 0.05 * Dimensions.get("window").height;
@@ -24,26 +25,20 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
   const x = useSharedValue(0);
   const y = useSharedValue(startingPosition);
   const [moving, setMoving] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-
- 
-  function isCardDrag(x, y) {
-    "worklet";
-    return true;
-    // return (x > 0 && x < 100 && y > 0 && y < 100)
-  }
+  const [activityModal, setActivityModal] = useState(false);
+  const [createModal, setCreateModal] = useState(false);
 
   function objectMove(object, from, to) {
     "worklet";
-    const newObject = Object.assign({}, object);
+    const newObject = {}
 
     for (const id in object) {
       if (object[id] === from) {
         newObject[id] = to;
-      }
-
-      if (object[id] === to) {
+      } else if (object[id] === to) {
         newObject[id] = from;
+      } else {
+        newObject[id] = object[id]
       }
     }
     return newObject;
@@ -71,24 +66,16 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
 
   const eventHandler = useAnimatedGestureHandler({
     onStart: (event, ctx) => {
-      if (!isCardDrag(event.absoluteX, event.absoluteY)) {
-        return
-      }
       runOnJS(setMoving)(true);
     },
     onActive: (event, ctx) => {
-      if (!isCardDrag(event.absoluteX, event.absoluteY)) {
-        return
-      }
       pressed.value = withSpring(-3);
       x.value = event.translationX;
       y.value = startingPosition + event.translationY;
       let center = y.value - CARD_HEIGHT/2;
 
       const newPosition = getNewPosition(center);
-      console.log("newPosition: ", newPosition);
       if (newPosition != orderedSchedule.value[object["name"]]) {
-        console.log(orderedSchedule.value);
         orderedSchedule.value = objectMove(
           orderedSchedule.value,
           orderedSchedule.value[object["name"]],
@@ -97,7 +84,6 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
       }
     },
     onFinish(event, ctx) {
-      if (!isCardDrag(event.absoluteX, event.absoluteY)) return
       y.value = withSpring(orderedSchedule.value[object["name"]] * CARD_HEIGHT);
       x.value = withSpring(0);
       pressed.value = withSpring(0);
@@ -116,7 +102,7 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
   });
 
   function handleAddActivity() {
-    setModalVisible(true);
+    setCreateModal(true);
   }
 
   return (
@@ -127,7 +113,8 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
           <TouchableOpacity onPress={handleAddActivity} ><View style={styles.addButton}><Text style={{color: "#344E41"}}>Add Activity Below</Text></View></TouchableOpacity>
         </Animated.View>
       </PanGestureHandler>
-      <ActivityBottomSheet open={modalVisible} setOpen={setModalVisible} editable={true} />
+      <ActivityBottomSheet open={activityModal} setOpen={setActivityModal} activity={object} editable={true} />
+      <ActivityBottomSheet open={createModal} setOpen={setCreateModal} newActivity={true} editable={true} />
     </Animated.View>
   );
 }
