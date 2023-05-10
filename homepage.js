@@ -15,10 +15,10 @@ export default function HomePage({ navigation }) {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.container}
         >
-          {data.map((date) => (
+          {data.map((date, i) => (
             <DaySection
               date={date.date}
-              scheduleArr={date.schedule}
+              dateIndex={i}
               navigation={navigation}
             />
           ))}

@@ -11,22 +11,26 @@ import { Formik } from "formik";
 import { SegmentedButtons } from "react-native-paper";
 import ActivityTypeSelection from "./ActivityTypeSelection";
 
-export default function NewActivityForm({activity, setActivity, handleSubmit, newActivity, editable}) {
+export default function NewActivityForm({
+  activity,
+  setActivity,
+  handleSubmit,
+}) {
   const [type, setType] = useState("destination");
 
   function handleNameChange(input) {
-      const newObj = {name: input, description: activity.description}
-      setActivity(a => newObj)
+    const newObj = { name: input, description: activity.description };
+    setActivity((a) => newObj);
   }
 
   function handleDescriptionChange(input) {
-    const newObj = {name: activity.name, description: activity.input}
-    setActivity(a => newObj)
-}
+    const newObj = { name: activity.name, description: input };
+    setActivity((a) => newObj);
+  }
 
   return (
     <Formik
-      onSubmit={val => handleSubmit()}
+      onSubmit={(val) => handleSubmit()}
       initialValues={{}} // must be here
     >
       {({ handleChange, handleBlur, handleSubmit, values }) => (
@@ -46,8 +50,7 @@ export default function NewActivityForm({activity, setActivity, handleSubmit, ne
                 paddingHorizontal: 5,
                 marginTop: 5,
               }}
-              editable={editable}
-              onChangeText={name => handleNameChange(name)}
+              onChangeText={(name) => handleNameChange(name)}
               onBlur={handleBlur("name")}
               value={activity.name}
             />
@@ -55,7 +58,6 @@ export default function NewActivityForm({activity, setActivity, handleSubmit, ne
           <View style={{ width: "100%" }}>
             <Text style={{ fontSize: 20, color: "#DAD7CD" }}>Description</Text>
             <TextInput
-              editable={editable}
               multiline={true}
               style={{
                 height: 140,
@@ -66,12 +68,24 @@ export default function NewActivityForm({activity, setActivity, handleSubmit, ne
                 paddingHorizontal: 5,
                 marginTop: 5,
               }}
-              onChangeText={desc => handleDescriptionChange(desc)}
+              onChangeText={(desc) => handleDescriptionChange(desc)}
               onBlur={handleBlur("description")}
               value={activity.description}
             />
           </View>
-          <TouchableOpacity onPress={handleSubmit} style={{width: "100%", height: 0.06 * Dimensions.get("window").height , backgroundColor: "#A3B18A", borderRadius: 5}} ><Text>Let's Go!</Text></TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleSubmit}
+            style={{
+              width: "100%",
+              height: 0.06 * Dimensions.get("window").height,
+              backgroundColor: "#A3B18A",
+              borderRadius: 5,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{fontSize: 30}}>Let's Go!</Text>
+          </TouchableOpacity>
         </View>
       )}
     </Formik>

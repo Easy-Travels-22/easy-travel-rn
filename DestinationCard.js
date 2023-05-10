@@ -21,7 +21,7 @@ export default function DestinationCard({ destination, editable }) {
     <View style={styles.container}>
       <View style={styles.imageContainer} >
         {destination.image ? (
-          <Image source={destination.image} />
+          <Image style={{width: "100%", height: "100%", borderRadius: 10}} source={{uri: destination["image"]}} />
         ) : (
           determineIcon()
         )}

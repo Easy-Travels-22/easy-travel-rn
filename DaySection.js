@@ -7,43 +7,49 @@ import {
 } from "react-native";
 import DestinationCard from "./DestinationCard";
 import { Entypo } from "@expo/vector-icons";
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign } from "@expo/vector-icons";
 import AnimatedButtons from "./AnimatedButtons";
+import TripContext from "./TripContext";
+import { useContext } from "react";
 
-export default function DaySection({ date, scheduleArr, navigation }) {
+export default function DaySection({ date, navigation, dateIndex }) {
+  const scheduleArr = useContext(TripContext).data.filter(day => day["date"] == date)[0]["schedule"];
+
   const onPress = () => {
     console.log("press");
   };
 
   const handleEditPress = () => {
-    console.log("edit");
-    navigation.push("Edit", {date: date, scheduleArr: scheduleArr});
+    navigation.push("Edit", { date: date, dateIndex: dateIndex });
   };
 
   const handleMovePress = () => {
     console.log("move");
-    
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.titleRow}>
-        <Text style={styles.titleText}>{date}</Text>
-          <AnimatedButtons>
-            <Entypo name="dots-three-horizontal" size={35} color="black" />
+    <TripContext.Consumer>
+      {({data, setData}) => (
+        <View style={styles.container}>
+          <View style={styles.titleRow}>
+            <Text style={styles.titleText}>{date}</Text>
+            <AnimatedButtons>
+              <Entypo name="dots-three-horizontal" size={35} color="black" />
               <TouchableOpacity onPress={handleEditPress}>
                 <Entypo name="edit" size={35} color="black" />
               </TouchableOpacity>
               <TouchableOpacity onPress={handleMovePress}>
-            <AntDesign name="export" size={35} color="black" />
-            </TouchableOpacity>
-            <AntDesign name="close" size={35} color="black" />
-          </AnimatedButtons>
-      </View>
-      {scheduleArr.map((activity) => {
-        return <DestinationCard destination={activity} />;
-      })}
-    </View>
+                <AntDesign name="export" size={35} color="black" />
+              </TouchableOpacity>
+              <AntDesign name="close" size={35} color="black" />
+            </AnimatedButtons>
+          </View>
+          {Object.entries(scheduleArr).map(activity => {
+            return <DestinationCard destination={activity[1]} />;
+          })}
+        </View>
+      )}
+    </TripContext.Consumer>
   );
 }
 

@@ -3,29 +3,29 @@ import {
   StyleSheet,
   View,
   Text,
-  ScrollView,
   Dimensions,
   SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { useSharedValue } from "react-native-reanimated";
 import TripContext from "./TripContext";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 export default function DayScheduleEditor({ route, navigation }) {
-  const { scheduleArr, date } = route.params;
-  const MARGIN = 0.05 * Dimensions.get("window").height;
-  const TITLE_SPACE = 75;
-  const SCROLLVIEW_HEIGHT =
-    scheduleArr.length * (150 + 1.5 * MARGIN) + TITLE_SPACE;
+  const { date, dateIndex } = route.params;
+  const {data, setData} = useContext(TripContext)
+  const MARGIN = 0.03 * Dimensions.get("window").height;
+  const TITLE_SPACE = 50;
+  const BUTTON_HEIGHT = 75;
 
   const listToObject = (array) => {
     returnObj = {};
 
     for (let i = 0; i < array.length; i++) {
-      returnObj[array[i]["name"]] = i;
+      returnObj[array[i]["name"]] = {
+        order: i,
+        description: array[i]["description"],
+      };
     }
     return returnObj;
   };
@@ -33,7 +33,27 @@ export default function DayScheduleEditor({ route, navigation }) {
   const array = useContext(TripContext).data.filter(
     (day) => day.date == date
   )[0].schedule;
+  function handleAddActivity() {
+    navigation.push("Create", { date: date, dateIndex: dateIndex });
+  }
+
+  function handleSave() {
+    const newData = data
+    const newActivityArr = Array(newData[dateIndex]["schedule"].length)
+    for (let activity in orderedSchedule.value) {
+      let currActivity = orderedSchedule.value[activity]
+      newActivityArr[currActivity["order"]] = {name: activity, description: currActivity["description"], image: data[dateIndex]["schedule"].filter(act => act["name"] == activity)[0]["image"]}
+    }
+    newData[dateIndex]["schedule"] = newActivityArr
+    setData(newData);
+    navigation.push("Home")
+  }
+
   const orderedSchedule = useSharedValue(listToObject(array));
+  const viewHeight =
+    Object.keys(orderedSchedule.value).length * (150 + 1.5 * MARGIN) +
+    TITLE_SPACE +
+    BUTTON_HEIGHT;
 
   return (
     <TripContext.Consumer>
@@ -46,20 +66,40 @@ export default function DayScheduleEditor({ route, navigation }) {
             }}
             contentContainerStyle={[
               styles.scrollContainer,
-              { minHeight: SCROLLVIEW_HEIGHT },
+              { minHeight: viewHeight },
             ]}
             showsVerticalScrollIndicator={false}
           >
-            <Text style={styles.titleText}>{date}</Text>
-            {scheduleArr.map((activity) => {
-              return (
-                <DraggableCard
-                  object={activity}
-                  id={orderedSchedule.value[activity["name"]]}
-                  orderedSchedule={orderedSchedule}
-                />
-              );
-            })}
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%", height: TITLE_SPACE }}
+            >
+              <Text style={styles.titleText}>{date}</Text>
+              <TouchableOpacity onPress={handleSave} >
+                <View style={styles.saveButton}>
+                  <Text>Save Changes</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            {data
+              .filter((day) => day["date"] == date)[0]
+              .schedule.map((activity) => {
+                return (
+                  <DraggableCard
+                    activity={activity}
+                    activityName={activity["name"]}
+                    orderedSchedule={orderedSchedule}
+                    date={date}
+                  />
+                );
+              })}
+            <TouchableOpacity
+              style={styles.touchableContainer}
+              onPress={handleAddActivity}
+            >
+              <View style={[styles.addButton, { height: BUTTON_HEIGHT }]}>
+                <Text style={{ color: "#344E41" }}>Add Activity Below</Text>
+              </View>
+            </TouchableOpacity>
           </Animated.ScrollView>
         </SafeAreaView>
       )}
@@ -88,6 +128,31 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 30,
     color: "#3A5A40",
-    marginVertical: 10,
   },
+  touchableContainer: {
+    position: "absolute",
+    bottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 0.95 * Dimensions.get("window").width - 10,
+  },
+  addButton: {
+    height: 0.03 * Dimensions.get("window").height,
+    backgroundColor: "#DAD7CD",
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "95%",
+  },
+  saveButton: {
+    height: 0.05 * Dimensions.get("window").height,
+    backgroundColor: "#DAD7CD",
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 5
+  }
 });

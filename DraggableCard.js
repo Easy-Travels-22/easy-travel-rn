@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dimensions, TouchableOpacity, Text, View, StyleSheet, Modal } from "react-native";
+import { Dimensions, Text, StyleSheet, View } from "react-native";
 import DestinationCard from "./DestinationCard.js";
 import Animated, {
   useSharedValue,
@@ -10,38 +10,41 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
-import ActivityBottomSheet from "./ActivityBottomSheet.js";
-import TripContext from "./TripContext.js";
+import CreateActivityPage from "./CreateActivityPage.js";
 
-export default function DraggableCard({ id, orderedSchedule, object }) {
-  const MARGIN = 0.05 * Dimensions.get("window").height;
+export default function DraggableCard({ orderedSchedule, activity, activityName, date }) {
+  const MARGIN = 0.03 * Dimensions.get("window").height;
   const CARDS_MARGIN_FROM_SCROLLVIEW =
     (0.05 * Dimensions.get("window").width - 10) / 2;
-  const CARD_HEIGHT = 150 + 1.5 * MARGIN;
+  const CARD_HEIGHT = 150 + MARGIN;
   const TITLE_SPACE = 50;
 
   const pressed = useSharedValue(0);
-  const startingPosition = orderedSchedule.value[object["name"]] * CARD_HEIGHT;
+  const startingPosition = orderedSchedule.value[activityName]["order"] * CARD_HEIGHT;
   const x = useSharedValue(0);
   const y = useSharedValue(startingPosition);
   const [moving, setMoving] = useState(false);
-  const [activityModal, setActivityModal] = useState(false);
-  const [createModal, setCreateModal] = useState(false);
 
-  function objectMove(object, from, to) {
+  function activityMove(activity, from, to) {
     "worklet";
-    const newObject = {}
-
-    for (const id in object) {
-      if (object[id] === from) {
-        newObject[id] = to;
-      } else if (object[id] === to) {
-        newObject[id] = from;
+    const newactivity = {};
+    for (const orderedActivity in orderedSchedule.value) {
+      let currOrder = orderedSchedule.value[orderedActivity]["order"]
+      if (currOrder === from) {
+        newactivity[orderedActivity] = {
+          order: to,
+          description: orderedSchedule.value[orderedActivity]["description"],
+        };
+      } else if (currOrder === to) {
+        newactivity[orderedActivity] = {
+          order: from,
+          description: orderedSchedule.value[orderedActivity]["description"],
+        };
       } else {
-        newObject[id] = object[id]
+        newactivity[orderedActivity] = orderedSchedule.value[orderedActivity];
       }
     }
-    return newObject;
+    orderedSchedule.value = newactivity;
   }
 
   function getNewPosition(center) {
@@ -53,7 +56,7 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
   }
 
   useAnimatedReaction(
-    () => orderedSchedule.value[object["name"]],
+    () => orderedSchedule.value[activityName]["order"],
     (currentPosition, previousPosition) => {
       if (currentPosition !== previousPosition) {
         if (!moving) {
@@ -72,19 +75,21 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
       pressed.value = withSpring(-3);
       x.value = event.translationX;
       y.value = startingPosition + event.translationY;
-      let center = y.value - CARD_HEIGHT/2;
+      let center = y.value - CARD_HEIGHT / 2;
 
       const newPosition = getNewPosition(center);
-      if (newPosition != orderedSchedule.value[object["name"]]) {
-        orderedSchedule.value = objectMove(
+      if (newPosition != orderedSchedule.value[activityName]["order"]) {
+        let newOS = activityMove(
           orderedSchedule.value,
-          orderedSchedule.value[object["name"]],
+          orderedSchedule.value[activityName]["order"],
           newPosition
         );
       }
     },
     onFinish(event, ctx) {
-      y.value = withSpring(orderedSchedule.value[object["name"]] * CARD_HEIGHT);
+      y.value = withSpring(
+        orderedSchedule.value[activityName]["order"] * CARD_HEIGHT
+      );
       x.value = withSpring(0);
       pressed.value = withSpring(0);
       runOnJS(setMoving)(false);
@@ -101,33 +106,18 @@ export default function DraggableCard({ id, orderedSchedule, object }) {
     };
   });
 
-  function handleAddActivity() {
-    setCreateModal(true);
-  }
-
   return (
     <Animated.View style={animatedStyle}>
-      <PanGestureHandler onGestureEvent={eventHandler} activateAfterLongPress={400} >
-        <Animated.View style={{maxWidth: 35, maxHeight: 80}}>
-          <DestinationCard editable={true} destination={object} />
-          <TouchableOpacity onPress={handleAddActivity} ><View style={styles.addButton}><Text style={{color: "#344E41"}}>Add Activity Below</Text></View></TouchableOpacity>
+      <PanGestureHandler
+        onGestureEvent={eventHandler}
+        activateAfterLongPress={400}
+      >
+        <Animated.View style={{ maxWidth: 35, maxHeight: 80 }}>
+          <DestinationCard editable={true} destination={activity}/>
         </Animated.View>
       </PanGestureHandler>
-      <ActivityBottomSheet open={activityModal} setOpen={setActivityModal} activity={object} editable={true} />
-      <ActivityBottomSheet open={createModal} setOpen={setCreateModal} newActivity={true} editable={true} />
     </Animated.View>
   );
 }
 
-const styles = StyleSheet.create({
-  addButton: {
-    width: 0.9 * Dimensions.get("window").width,
-    height: 0.03 * Dimensions.get("window").height,
-    marginTop: 0.01 * Dimensions.get("window").height,
-    backgroundColor: "#DAD7CD",
-    borderRadius: 10,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center"
-  }
-})
+const styles = StyleSheet.create({});
